@@ -8,51 +8,53 @@
 
 Nelle lezioni precedenti la studentessa ha imparato che un programma può:
 
-* reagire a un evento;
+* reagire agli eventi;
 * prendere decisioni;
-* ricordarsi uno stato.
+* mantenere uno stato.
 
-Oggi scoprirà qualcosa di nuovo.
+Oggi scoprirà un altro concetto fondamentale.
 
-Una pagina web **non deve essere completamente scritta all'inizio**.
+Una pagina web **non è un blocco unico**.
 
-Può essere costruita e modificata dal programma mentre è in esecuzione.
+Può essere composta da tanti piccoli elementi indipendenti.
+
+Ogni elemento ha una responsabilità precisa.
 
 Alla fine della lezione dovrà riuscire a spiegare questa frase:
 
-> "L'interfaccia dipende dai dati."
+> "Ogni attività della lista è un piccolo pezzo dell'applicazione."
 
-È probabilmente uno dei concetti più importanti dell'intero percorso.
+Non useremo ancora la parola **componente**.
+
+È più importante capirne l'idea.
 
 ---
 
 # Prima di iniziare
 
-Questa è la prima lezione in cui l'HTML non è più fisso.
+Questa è la prima lezione in cui inizierete a dividere il codice.
 
-Fino ad oggi il programma cambiava solo il testo di elementi già esistenti.
+Fino ad oggi tutto viveva in `main.ts`.
 
-Da oggi inizierà a creare elementi nuovi.
+Da oggi il file sta diventando abbastanza grande da meritare una migliore organizzazione.
 
-Questo è un grande passo.
+Non presentarla come una regola.
 
-Vai lentamente.
+Presentala come una conseguenza naturale.
 
 ---
 
 # Cosa costruirete
 
-Una piccola Todo List.
+Una Todo List.
 
 L'utente potrà:
 
-* scrivere un'attività;
-* premere "Aggiungi";
-* vedere comparire una nuova riga nella lista.
+* aggiungere attività;
+* contrassegnarle come completate;
+* eliminarle.
 
-Per semplicità, oggi **non eliminerete ancora le attività**.
-
-L'obiettivo è imparare a crearle.
+Ogni attività sarà rappresentata da un oggetto e da un elemento della pagina.
 
 ---
 
@@ -64,15 +66,16 @@ Nuovi concetti:
 * `append()`
 * `for...of`
 * creare elementi dinamicamente
-* funzione `render()`
+* separare il codice in più file
+* callback
+* aggiornare una parte dell'interfaccia
 
 Concetti già conosciuti:
 
 * array
+* oggetti
 * funzioni
 * eventi
-* variabili
-* input
 * stato
 
 ---
@@ -81,100 +84,85 @@ Concetti già conosciuti:
 
 Ripeti spesso questa frase.
 
-> "I dati vengono prima. La pagina li rappresenta."
+> "I dati vengono prima. L'interfaccia li rappresenta."
 
-È il concetto chiave.
+È il filo conduttore di tutta la lezione.
 
 ---
 
 # Struttura della lezione
 
-## Parte 1 — Costruiamo la pagina
+## Parte 1 — Costruiamo l'interfaccia
 
-Fatele creare:
+Come sempre.
+
+Prima costruite:
 
 * titolo;
 * input;
 * pulsante;
-* lista vuota (`<ul>`).
+* lista.
 
-Ancora una volta, partite sempre dall'interfaccia.
+Nessuna logica.
 
 ---
 
-# Parte 2 — Dove salviamo le attività?
+## Parte 2 — Dove vivono le attività?
 
 Domanda.
 
-> "Quando aggiungiamo una nuova attività... dove la teniamo?"
+> "Quando aggiungo una nuova attività...
+
+dove la salvo?"
 
 Lascia che ci pensi.
 
-Dovrebbe arrivare naturalmente a:
+Arriverà naturalmente a:
 
 ```ts
-let tasks: string[] = [];
+let attività: Attività[] = [];
 ```
 
-Ricorda.
+Qui introduce anche il primo modello dell'applicazione.
 
-Non stiamo ancora mostrando nulla.
+```ts
+type Attività = {
+    titolo: string;
+    completata: boolean;
+}
+```
 
-Stiamo solo salvando dati.
+Spiega semplicemente:
+
+> "Ogni attività deve avere sempre queste informazioni."
 
 ---
 
-# Parte 3 — Aggiungere una nuova attività
+## Parte 3 — Perché non succede niente?
+
+Aggiungete:
+
+```ts
+attività.push(...)
+```
+
+Poi fermati.
 
 Domanda.
 
-> "Come facciamo ad aggiungere un nuovo elemento alla lista?"
+> "Perché la pagina non è cambiata?"
 
-Aspetta.
+Questa è una delle scoperte più importanti del corso.
 
-Se non lo ricorda, introduci:
+I dati non modificano automaticamente l'interfaccia.
 
-```ts
-tasks.push(...)
-```
-
-Fatele osservare che l'array cambia.
-
-La pagina invece no.
+Serve aggiornarla.
 
 ---
 
-# Parte 4 — Perché non succede niente?
+## Parte 4 — La funzione render()
 
-Questo è un momento fondamentale.
-
-Dopo aver fatto:
-
-```ts
-tasks.push(...)
-```
-
-Chiedi.
-
-> "Perché non è comparso nulla?"
-
-Non rispondere subito.
-
-L'obiettivo è farle capire che:
-
-> modificare i dati
-
-non significa
-
-> modificare automaticamente la pagina.
-
-Questa scoperta vale moltissimo.
-
----
-
-# Parte 5 — La funzione render()
-
-Introduci una funzione.
+Introduci:
 
 ```ts
 render();
@@ -182,115 +170,133 @@ render();
 
 Spiegala così.
 
-> "Ogni volta che cambiano i dati, ridisegniamo la lista."
+> "Ogni volta che cambiano i dati, ricostruiamo la lista."
 
-Non parlare ancora di framework o React.
-
-Basta questa idea.
+Non parlare ancora di framework.
 
 ---
 
-# Parte 6 — Creare un elemento
+## Parte 5 — Creare un'attività
 
-Qui arriva il vero concetto nuovo.
+Qui nasce il nuovo file.
 
-Domanda.
-
-> "Se la lista contiene tre attività...
-
-come facciamo a creare tre `<li>`?"
-
-Introduce:
-
-```ts
-document.createElement("li")
 ```
+components/
+
+    task-item.ts
+```
+
+Non dire:
+
+> "Creiamo un componente."
+
+Dì invece:
+
+> "Spostiamo il codice che sa costruire una singola attività."
+
+Questo è molto più concreto.
+
+---
+
+## Parte 6 — createElement()
+
+Ogni attività viene costruita con:
+
+* `<li>`
+* checkbox
+* testo
+* pulsante elimina
+
+Usate `createElement()` per tutti gli elementi.
 
 Falle osservare una cosa.
 
 Quando scrive:
 
 ```ts
-li.
+const span = document.createElement("span");
+
+span.
 ```
 
 VS Code suggerisce tantissime proprietà.
 
-Spiegale che questo succede perché `li` è un vero oggetto, non una stringa.
-
-È uno dei motivi per cui oggi usiamo `createElement()`.
+Spiega che questo succede perché `span` è un vero oggetto.
 
 ---
 
-# Parte 7 — Riempire l'elemento
+## Parte 7 — CSS e responsabilità
 
-Aggiungete:
+Questa è una buona occasione per introdurre un principio importante.
+
+Il TypeScript decide **cosa** succede.
+
+Il CSS decide **come** appare.
+
+Per questo motivo evita:
 
 ```ts
-li.textContent = ...
+span.style.textDecoration = ...
 ```
 
-Poi.
+Preferisci:
 
 ```ts
-lista.append(li)
+span.classList.toggle(
+    "completed",
+    attività.completata,
+);
 ```
 
-Salvate.
-
-Osservate.
-
-È uno dei momenti più belli della lezione.
-
-Il programma ha appena creato un pezzo di pagina.
+Così sarà il CSS a decidere l'aspetto di un'attività completata.
 
 ---
 
-# Parte 8 — Il ciclo
+## Parte 8 — Le callback
+
+Quando il pulsante elimina viene premuto.
 
 Domanda.
 
-> "Se le attività fossero dieci?"
+> "Chi sa davvero come eliminare un'attività?"
 
-Lascia che proponga qualche idea.
+La risposta è:
 
-Poi introduci.
+Non `task-item.ts`.
+
+Lo sa `main.ts`.
+
+Per questo motivo il componente riceve una funzione.
 
 ```ts
-for (const task of tasks)
+onDelete()
 ```
 
-Non presentarlo come "oggi impariamo i cicli".
+Non chiamarla callback.
 
-Presentalo come la soluzione a un problema reale.
+Puoi semplicemente dire.
+
+> "È una funzione che il componente può eseguire quando serve."
 
 ---
 
-# Parte 9 — Svuotare la lista
+## Parte 9 — Aggiornare solo ciò che cambia
 
-Prima di ricrearla.
+Qui arriva una distinzione molto importante.
 
-Domanda.
-
-> "Se richiamo render due volte... cosa succede?"
-
-Lascia che lo scopra.
-
-Compariranno i duplicati.
-
-Perfetto.
-
-Ora introduci:
+Quando aggiungiamo o eliminiamo un'attività:
 
 ```ts
-lista.innerHTML = "";
+render();
 ```
 
-Spiega.
+Quando invece cambiamo solo la checkbox:
 
-> "Prima cancelliamo tutto.
+non serve ricreare tutta la lista.
 
-Poi ricostruiamo la lista."
+Basta aggiornare quel singolo elemento.
+
+Spiega che non sempre è necessario ridisegnare tutta la pagina.
 
 ---
 
@@ -302,15 +308,12 @@ Questa volta prova a:
 
 * dimenticare `append()`;
 * dimenticare `render()`;
-* creare il `li` ma non aggiungerlo.
+* non aggiungere la classe `completed`;
+* eliminare una chiamata a `updateUI()`.
 
 Domanda.
 
-> "Il programma ha creato l'elemento.
-
-Perché non lo vediamo?"
-
-È un ottimo momento per distinguere tra memoria e pagina.
+> "Perché i dati sono giusti ma la pagina no?"
 
 ---
 
@@ -318,23 +321,25 @@ Perché non lo vediamo?"
 
 ## ⭐ Facile
 
-Dopo aver aggiunto un'attività:
-
-svuotare automaticamente l'input.
+Svuotare automaticamente l'input.
 
 ---
 
 ## ⭐⭐ Media
 
-Se l'input è vuoto:
-
-non aggiungere nulla.
+Premere Invio per aggiungere un'attività.
 
 ---
 
 ## ⭐⭐⭐ Difficile
 
-Premendo Invio invece del pulsante.
+Mostrare in basso.
+
+```
+Attività completate: 3 / 7
+```
+
+Questa sfida è molto interessante perché costringe a ragionare sui dati, non sull'interfaccia.
 
 ---
 
@@ -342,63 +347,53 @@ Premendo Invio invece del pulsante.
 
 Evita ancora:
 
-* `querySelectorAll`
-* `dataset`
-* `classList`
-* `remove()`
+* framework
+* React
+* Vue
+* Virtual DOM
+* classi JavaScript
 * delegazione degli eventi
-* callback complesse
 
-Ci serviranno presto.
-
-Ma oggi no.
+Anche se il codice inizia ad assomigliare a quello di un framework moderno.
 
 ---
 
 # Come capire se la lezione è riuscita
 
-Alla fine chiedile:
+Alla fine chiedile.
 
-> "Se aggiungo una nuova attività...
+> "Che cosa sa fare `main.ts`?"
 
-quali sono tutti i passaggi che fa il programma?"
+E poi.
 
-Una buona risposta potrebbe essere:
+> "Che cosa sa fare `task-item.ts`?"
 
-> "Legge il testo.
+La risposta ideale è qualcosa del genere.
 
-Lo aggiunge all'array.
+> "`main.ts` gestisce tutta la lista.
 
-Cancella la lista.
+> `task-item.ts` sa costruire e aggiornare una sola attività."
 
-Ricrea tutti gli elementi.
+Se riesce a fare questa distinzione, ha iniziato a capire uno dei principi più importanti dello sviluppo software:
 
-Li aggiunge alla pagina."
-
-Se riesce a raccontare questa sequenza, ha capito il cuore della lezione.
+> **Ogni pezzo di codice dovrebbe avere una sola responsabilità.**
 
 ---
 
 # Per te
 
-Questa è la prima lezione in cui la studentessa inizierà a vedere la pagina web come qualcosa che il programma costruisce.
+Questa è una delle lezioni più importanti dell'intero percorso.
 
-È un cambio di prospettiva enorme.
+Per la prima volta la studentessa vedrà che un programma non cresce semplicemente aggiungendo righe nello stesso file.
 
-Non avere fretta di arrivare al risultato finale.
+Cresce dividendolo in parti più piccole, ognuna semplice da capire.
 
-Fermati spesso.
+Non è ancora il momento di parlare di componenti o architetture.
 
-Ogni volta che compare un nuovo elemento chiedile:
+È il momento di costruire una buona intuizione.
 
-> "Chi lo ha creato?"
+Un giorno scoprirà React o Vue e penserà:
 
-La risposta corretta non è:
+> "Ah... è la stessa idea che usavamo nella Todo List."
 
-> "Noi."
-
-È:
-
-> "Il programma."
-
-Quando inizierà a ragionare in questo modo, sarà pronta per affrontare progetti molto più complessi.
+Ed è esattamente l'obiettivo di questa lezione.

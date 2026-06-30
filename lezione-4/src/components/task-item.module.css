@@ -1,0 +1,18 @@
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-title {
+    flex: 1;
+}
+
+.task-checkbox {
+    flex: 0;
+}
+
+.completed {
+    text-decoration: line-through;
+    opacity: 0.5;
+}

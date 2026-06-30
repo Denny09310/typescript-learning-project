@@ -1,39 +1,47 @@
+import styles from './task-item.module.css';
+
 import type { Attività } from "../types/attività";
 
-export default function creaElementoAttività(
+export default function createTaskItem(
     attività: Attività,
-    invertiStato: () => void
+    suEliminazione: () => void,
 ): HTMLLIElement {
 
     const li = document.createElement("li");
+    li.classList.add(styles["task-item"]);
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = attività.completata;
+    checkbox.classList.add(styles["task-checkbox"])
 
-    const span = document.createElement("span");
-    span.textContent = attività.titolo;
+    const title = document.createElement("span");
+    title.classList.add(styles["task-title"]);
 
-    aggiornaStile();
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add(styles["delete-button"]);
+    deleteButton.textContent = "🗑️";
 
-    checkbox.addEventListener("change", () => {
-        attività.completata = checkbox.checked;
-        aggiornaStile();
-        invertiStato();
-    });
+    checkbox.addEventListener("change", onCheckboxChange);
+    deleteButton.addEventListener("click", suEliminazione);
 
-    li.append(checkbox);
-    li.append(span);
+    li.append(
+        checkbox,
+        title,
+        deleteButton,
+    );
+
+    updateUI();
 
     return li;
 
-    function aggiornaStile() {
-        if (attività.completata) {
-            span.style.textDecoration = "line-through";
-            span.style.opacity = "0.5";
-        } else {
-            span.style.textDecoration = "none";
-            span.style.opacity = "1";
-        }
+    function onCheckboxChange() {
+        attività.completata = checkbox.checked;
+        updateUI();
+    }
+
+    function updateUI() {
+        checkbox.checked = attività.completata;
+        title.textContent = attività.titolo;
+        title.classList.toggle(styles["completed"], attività.completata);
     }
 }
