@@ -1,6 +1,6 @@
 import "./style.css";
 
-document.querySelector("#app")!.innerHTML = /* html */ `
+document.querySelector<HTMLDivElement>("#app")!.innerHTML = /* html */ `
   <div class="card">
     <h1>💌 Generatore di complimenti</h1>
     <p id="complimento">Premi il bottone per scoprire cosa penso di te</p>
@@ -16,10 +16,12 @@ const complimenti = [
   "Con te il tempo vola sempre troppo in fretta.",
 ];
 
-const complimentoEl = document.querySelector("#complimento")!;
+const complimentoEl = document.querySelector<HTMLParagraphElement>("#complimento")!;
 const bottoneEl = document.querySelector<HTMLButtonElement>("#bottone")!;
 
-bottoneEl.addEventListener('click', () => {
+bottoneEl.addEventListener('click', generaComplimento);
+
+function generaComplimento() {
   const indice = Math.floor(Math.random() * complimenti.length);
   complimentoEl.textContent = complimenti[indice];
-});
+}
